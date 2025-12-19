@@ -2,7 +2,7 @@
 title: "Why Schema Flexibility in IoT Fails Without Explicit Metadata"
 description: "Generic platforms break when meaning is inferred from structure. Here’s what survives growth."
 pubDate: 2025-12-19
-heroImage: "../../assets/blog-placeholder-1.jpg"
+heroImage: "../../assets/why-schema-flexibility-in-iot-fails.png"
 ---
 
 # Why Schema Flexibility in IoT Fails Without Explicit Metadata
