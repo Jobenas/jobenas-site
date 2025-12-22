@@ -1,0 +1,36 @@
+---
+const email = "me@jobenas.com";
+---
+
+<section class="post-footer">
+  <hr />
+  <h3>About this site</h3>
+
+  <p>
+    I write about engineering problems that only show up once systems grow:
+    decaying toolchains, brittle boundaries, and the hidden cost of “just one more workaround.”
+  </p>
+
+  <p>
+    If you’re dealing with similar issues — especially where embedded systems meet cloud tooling —
+    feel free to reach out at <a href={`mailto:${email}`}>{email}</a>. I’m more interested in
+    discussing real systems than debating abstractions.
+  </p>
+</section>
+
+<style>
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    opacity: 0.95;
+  }
+  .post-footer hr {
+    margin-bottom: 1.25rem;
+  }
+  .post-footer h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.05rem;
+  }
+</style>

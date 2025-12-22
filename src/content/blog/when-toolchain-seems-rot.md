@@ -153,5 +153,3 @@ They decay quietly: one broken assumption at a time, until manual work becomes n
 At that point, the choice is simple: accept the decay, or rebuild the bridge explicitly.
 
 Toolchains are no exception.
-
->If this maps to a problem you’re dealing with, feel free to reach out at me@jobenas.com. I’m more interested in discussing real systems than debating abstractions.
