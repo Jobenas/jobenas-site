@@ -1,7 +1,7 @@
 ---
 title: "When Toolchain Seams Rot: Rebuilding the CubeMX → PlatformIO Boundary"
 description: "How small upstream changes quietly broke a once-viable STM32 workflow, and why generic toolchains decay without explicit bridges."
-pubDate: 2025-12-19
+pubDate: 2025-12-22
 heroImage: "../../assets/stm32bridge_image.png"
 ---
 
