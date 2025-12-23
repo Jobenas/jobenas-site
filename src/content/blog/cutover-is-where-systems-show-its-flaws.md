@@ -2,7 +2,7 @@
 title: "Cutover Is Where Systems Stop Optimizing for You"
 description: "Why system optimization works for the steady state but not for transient states."
 pubDate: 2025-12-23
-heroImage: "../../assets/migration.jpg"
+heroImage: "../../assets/migration.png"
 ---
 
 ### This wasn’t a database migration in the usual sense.
