@@ -87,7 +87,7 @@ Many ingestion pipelines respond by adding special cases. Others push complexity
 
 None of these approaches scale particularly well.
 
-## The real challenge isn’t connectivity — it’s semantics
+## The real challenge isn’t connectivity, it’s semantics
 
 The hard part of multi-network systems isn’t moving bytes. It’s reconciling meaning.
 
