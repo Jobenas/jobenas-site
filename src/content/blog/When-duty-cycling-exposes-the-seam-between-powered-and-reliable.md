@@ -1,7 +1,7 @@
 ---
 title: "When duty cycling exposes the seam between powered and reliable"
 description: "Low power modes surface readiness assumptions that steady state systems quietly satisfy."
-pubDate: 2026-01-XX
+pubDate: 2026-01-12
 heroImage: "../../assets/modem-power-seam.png"
 ---
 
