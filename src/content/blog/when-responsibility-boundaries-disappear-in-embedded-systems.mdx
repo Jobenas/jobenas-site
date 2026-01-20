@@ -84,7 +84,7 @@ This pattern becomes viable in a non-blocking design once two constraints are en
 
 These two observations lead to a complete decoupling of the modem operation and allow the code to resurface to the main loop (or FSM or whatever is being used) and don't get stuck inside individual components for long periods, in the order of seconds.
 
-The expression of these observations leads to three important considerations in the code. First, the parameters are network specific, but they should appear in a uniform way, so even though the driver doesn't know what specific command or terminations we're expecting, or what a success or error looks like, we can still consume those elements and act on them in a generalized way. In the example we can see this as a simple structure as the following.
+The expression of these observations leads to two important considerations in the code. First, the parameters are network specific, but they should appear in a uniform way, so even though the driver doesn't know what specific command or terminations we're expecting, or what a success or error looks like, we can still consume those elements and act on them in a generalized way. In the example we can see this as a simple structure as the following.
 
 ```C
 typedef struct {
