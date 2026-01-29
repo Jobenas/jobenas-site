@@ -1,0 +1,178 @@
+---
+title: "Localized Ownership and Why Debugging Breaks Down at Scale"
+description: "How diffuse responsibility makes debugging complex systems challenging"
+pubDate: 2026-01-29
+heroImage: "../../assets/localized_ownership.png"
+---
+
+As systems inevitably grow in features and complexity, the surface area for failure grows with them. Interactions multiply, assumptions accumulate, and behavior that once felt local starts depending on increasingly wide context.
+
+Without clear definitions and ordering, debugging becomes a complex activity in its own right. Failures are no longer isolated to a single component. Understanding what went wrong requires reconstructing timing, state, and interactions across large portions of the system. At that point, even small changes become expensive, because they can introduce regressions in places that, in theory, have nothing to do with the change itself.
+
+This is a common pattern in both embedded and distributed systems. It doesn’t usually appear all at once. It emerges gradually, as responsibilities blur and boundaries soften under pressure.
+
+To reason about this class of problems, it is useful to introduce a term that captures the underlying condition. In what follows, **localized ownership** refers to a design property where responsibilities, state, and assumptions are explicitly bounded and enforced within specific parts of a system. When ownership is localized, reasoning, testing, and debugging tend to remain local as well. When it is not, failures propagate across boundaries that were never clearly defined.
+
+## Localized ownership as a system property
+
+Localized ownership is not about layering for its own sake, nor about enforcing a particular architectural style. It is about ensuring that each part of a system owns a clearly defined set of responsibilities, and that these responsibilities do not leak arbitrarily across boundaries.
+
+When ownership is localized, certain properties tend to emerge. Behavior can often be isolated by narrowing the scope of investigation. Changes tend to remain confined to the components that explicitly own the affected behavior. Debugging becomes an exercise in elimination rather than reconstruction.
+
+These properties are not guaranteed, but they are difficult to achieve in their absence.
+
+## An example under growth pressure
+
+Consider a class of embedded devices that begin with a narrow, well-defined responsibility. A fixed pulse counter is a typical case. Early behavior is simple, interactions are limited, and failures are easy to localize.
+
+As such systems evolve, additional capabilities are often introduced incrementally. Support for protocols such as Modbus is added. A configurable serial interface is exposed through a CLI using AT-style commands. The device shifts from a single-purpose component to something that participates in multiple interactions, some continuous, some configuration-driven.
+
+At that point, a familiar failure mode tends to appear. Bugs surface that are difficult to reproduce consistently. Behavior depends on timing, on which interface is active, and on how features are exercised together. Debugging stops being local. Understanding a failure requires reconstructing system-wide context rather than inspecting a single component.
+
+This is usually a sign that ownership has become diffuse.
+
+## Localized ownership as a structural response
+
+One way to address this class of problems is to re-establish localized ownership. That is, to make explicit which parts of the system own which responsibilities, state, and assumptions, and to enforce those boundaries in code.
+
+In the system described above, a layered structure was used to make ownership explicit. This is not presented as a prescription, but as a concrete way to illustrate what localized ownership looks like in practice.
+
+To make the idea tangible, it helps to examine a single boundary. In this case, the boundary between hardware interaction and device mechanics is a useful example. The board support layer (BSP) happens to sit at that boundary, but it is only one of many places where ownership can be localized.
+
+## Locating ownership at the hardware boundary
+
+In modern MCU environments, direct interaction with silicon is typically handled by a hardware abstraction l
+ayer (HAL). The HAL owns register-level semantics and peripheral operation. It exposes generic APIs for timers, GPIOs, UARTs, and other hardware resources.
+
+What the HAL does not own is board-level meaning. It does not know which UART is connected to which connector, how peripherals are wired, or how the hardware is intended to be used in a specific product.
+
+That responsibility belongs to the BSP.
+
+The BSP binds generic hardware abstractions to a concrete board. It selects peripherals, configures mappings, and initializes board-specific resources. Its responsibility is narrow and explicit: present a stable, board-specific interface upward, while depending on the HAL downward.
+
+A typical BSP function reflects this:
+
+``` C
+bool uart_write(uart_id_t id, const uint8_t *buf, size_t len) {     return HAL_UART_Transmit(uart_map[id], buf, len, TIMEOUT) == HAL_OK; }
+```
+
+There is no protocol logic here. No interpretation of data. No knowledge of application state. The BSP owns mapping, not meaning.
+
+
+## Adjacent ownership: drivers above, HAL below
+
+Above the BSP, drivers take ownership of device mechanics. They understand protocols, framing, timeouts, and response interpretation. They depend on the BSP for transport, but remain agnostic to both silicon details and business intent.
+
+A driver interface might look like:
+
+```C
+modem_result_t modem_send(const modem_cmd_t *cmd); modem_result_t modem_poll(void);
+```
+
+While the interface defines the boundary and establishes the contract, the implementation shows ownership enforcement.
+
+```C 
+modem_result_t modem_send(const modem_cmd_t *cmd) {
+    bsp_uart_write(cmd->bytes, cmd->len);
+    ctx.deadline = now() + cmd->timeout;
+    ctx.pending = true;
+    return MODEM_PENDING;
+}
+
+modem_result_t modem_poll(void) {
+    bsp_uart_read(rx_buf);
+
+    if (match_success(rx_buf)) return MODEM_OK;
+    if (match_error(rx_buf))   return MODEM_ERROR;
+    if (expired(ctx.deadline)) return MODEM_TIMEOUT;
+
+    return MODEM_PENDING;
+}
+```
+
+
+The driver owns protocol state and interpretation. It does not know why a command is sent, and it does not decide what happens next. Those decisions belong to higher layers.
+
+Above drivers, services and application logic own sequencing, policy, and business behavior. Their role is acknowledged here, but not expanded on, because the ownership boundary under examination sits lower in the stack.
+
+Access between layers is strictly vertical. A driver does not bypass the BSP to call HAL directly. Higher layers do not reach into driver internals. These shortcuts are not discouraged. They are unavailable.
+
+## What localized ownership enables
+
+Localized ownership does not eliminate complexity, but it constrains where that complexity is allowed to live. When responsibilities are explicitly bounded, behavior becomes isolatable by construction rather than by effort.
+
+One immediate consequence is that failures tend to remain local. Components can be exercised and reasoned about in isolation, without requiring full system context. When a failure appears at a higher level but not at a lower one, the problem space narrows naturally. Debugging becomes an exercise in elimination rather than reconstruction.
+
+This also changes how systems are tested. Components can be treated as units in their own right, not only as participants in end-to-end flows. The goal is not to replicate integration testing at a smaller scale, but to verify that each component remains consistent with the responsibilities it owns. When those guarantees hold, higher-level behavior becomes easier to trust and easier to reason about.
+
+Another consequence is that portability becomes more achievable, even when it is not an explicit design goal. When hardware-specific assumptions are confined to the components that own them, higher layers are free to express behavior without embedding those assumptions indirectly. Changes in hardware or platform remain localized, and their impact does not ripple arbitrarily through the system.
+
+Localized ownership is not the only way to achieve these properties, and it does not remove the need for careful design. What it provides is structural pressure toward systems where growth remains intentional, and where failures surface in places that can still be understood and corrected.
+
+## Localized ownership under an RTOS
+
+A common objection to this line of reasoning is that it only applies to simple execution models. Once an RTOS is introduced, concurrency, scheduling, and inter-task communication appear to invalidate these assumptions.
+
+In practice, concurrency does not eliminate ownership boundaries. It changes where execution occurs, but not where responsibility should live. Tasks introduce an additional execution context, not a new place to accumulate logic.
+
+To make this concrete, consider a communication task responsible for servicing a modem. At the interface level, the task exposes a narrow contract:
+
+```C
+void modem_task_start(void);
+modem_result_t modem_request(const modem_cmd_t *cmd);
+```
+
+This contract establishes what the task is responsible for: providing a serialized execution context for modem interaction. It does not imply ownership of protocol mechanics, hardware access, or application policy.
+
+The distinction becomes clearer when looking at the implementation.
+
+```C
+void modem_task(void *arg) {
+    for (;;) {
+        modem_poll();
+        vTaskDelay(POLL_INTERVAL);
+    }
+}
+
+modem_result_t modem_request(const modem_cmd_t *cmd) {
+    return modem_send(cmd);
+}
+```
+
+The task owns scheduling and execution. It decides when an action is required, but not how that action is realized at the protocol or hardware level. Those responsibilities remain localized elsewhere.
+
+The boundary is enforced by the driver implementation itself.
+
+```C
+modem_result_t modem_poll(void) {
+    bsp_uart_read(rx_buf);
+
+    if (match_success(rx_buf)) return MODEM_OK;
+    if (match_error(rx_buf))   return MODEM_ERROR;
+    if (expired(ctx.deadline)) return MODEM_TIMEOUT;
+
+    return MODEM_PENDING;
+}
+```
+
+Here, protocol state, response interpretation, and timeout handling are owned by the driver. The task does not inspect buffers, interpret responses, or manage protocol state. It merely provides an execution context in which this logic can run.
+
+In this sense, a task behaves much like any other layer in the system. It defines a boundary for execution, not a boundary for responsibility.
+
+When ownership is not localized, RTOS-based systems tend to degrade more quickly. Protocol logic migrates into tasks. Shared state spreads across execution contexts.Timing assumptions leak into application code. Debugging shifts from reasoning about components to reasoning about the scheduler.
+
+The RTOS does not invalidate localized ownership. It makes violations of it more visible, and more expensive.
+
+## Final thoughts
+
+Localized ownership does not eliminate complexity, and it does not guarantee correctness. Systems still fail, assumptions still break, and growth still introduces new forms of coupling. What localized ownership changes is not the existence of these problems, but their shape.
+
+When responsibilities are explicitly bounded and enforced, complexity tends to remain contained. Failures surface closer to the components that own them. Changes have a narrower blast radius. Reasoning about behavior becomes possible without reconstructing the entire system in one’s head.
+
+Seen from that perspective, localized ownership treats debugging as a design concern rather than an afterthought. The ability to narrow the debugging surface is not something added later through tools or process. It is a property that emerges when ownership boundaries are clear enough to be relied upon.
+
+This is not a new idea. It closely mirrors the Single Responsibility Principle, extended beyond individual functions or classes to components and subsystems. What changes at scale is not the principle itself, but the cost of ignoring it. When ownership is diffuse, violations accumulate quietly until debugging and evolution become disproportionately expensive.
+
+Localized ownership is not tied to a particular architecture, execution model, or toolchain. It holds under simple loops and under RTOS-based systems alike. What matters is not where code runs, but where responsibility lives.
+
+In practice, systems tend to degrade not because they lack abstractions, but because abstractions stop enforcing boundaries. Localized ownership is one way to recognize and resist that drift, long before failures make it unavoidable.
