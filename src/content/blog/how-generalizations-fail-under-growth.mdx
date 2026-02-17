@@ -1,0 +1,202 @@
+---
+title: "How generalizations fail under growth"
+description: "Why variability in systems is not the problem, but their placement is"
+pubDate: 2026-02-17
+heroImage: "../../assets/variability.png"
+---
+
+For many systems, the first iteration focuses on a specific task. The design is simple, direct, and aligned with a narrow domain. It works well because the assumptions are clear and the scope is limited.
+
+Over time, success invites expansion. New features are added. Adjacent use cases are absorbed. A system that once solved one problem becomes a more general tool.
+
+This transition feels natural. A CRM begins to handle accounting. An inventory tool starts managing billing. A water monitoring platform evolves into a broader environmental system. On the surface, the evolution makes sense: if the foundation works, why not extend it?
+
+The tradeoff appears later.
+
+As features accumulate, specialization begins to creep back in. Not at the infrastructure level, but at the application level. Certain use cases require domain-specific behavior that does not generalize cleanly. Reporting logic becomes contextual. Alerting becomes policy-driven. What once felt like configurable behavior starts requiring embedded business rules.
+
+The application still functions. But it becomes harder to reason about. Harder to evolve. Harder to adapt without unintended side effects.
+
+The issue is not variability itself. It is where variability is allowed to live. When designs place domain-specific logic in layers that were meant to remain general, complexity grows in the wrong place.
+
+## What Generalization Really Means
+
+The issue is not that applications cannot be generalized. Generalization is both possible and necessary in many systems. The problem arises when generalization is applied indiscriminately across all layers.
+
+Not every part of a system should absorb variability.
+
+Any meaningful application contains both variable and invariable components.
+
+The variable component is where data, context, or domain-specific behavior changes. Different ingestion schemas. Different device types. Different business rules.
+
+The invariable component is structural. Reports always have a time window, totals, and breakdowns. Alerts always evaluate a condition and trigger an action. Dashboards always render structured data into visual representations.
+
+These structures remain stable even when the underlying data changes.
+
+When variability is introduced into layers that are meant to remain structurally stable, complexity increases in the wrong place. Instead of confining change to well-defined boundaries, the system forces its core components to adapt to every new domain-specific requirement.
+
+The result is predictable: more branching logic, tighter coupling between unrelated features, and a system that is technically flexible but operationally fragile.
+
+Generalization is not about making every layer configurable. It is about identifying where variability belongs, and preventing it from leaking into places that should remain invariant.
+
+## Distributing Generalization
+
+The question is not whether systems should support variability. They must. The question is where that variability should live.
+
+Variability cannot be allowed to diffuse across all layers of a system. When every component becomes configurable, every component becomes unstable. The goal is not to eliminate variation, but to localize it behind explicit contracts.
+
+One way to achieve this is by elevating those contracts into platform primitives.
+The term “primitive” is useful here because it implies something foundational and stable. A primitive is not domain logic. It is a codified capability: a well-defined action, structure, or interface that expresses what the platform guarantees.
+
+For example, a platform primitive might define:
+
+ - how data is ingested,
+ - how time windows are evaluated,
+ - how alerts are triggered,
+ - how reports are structured.
+
+These primitives encode invariant mechanisms. They do not encode domain semantics.
+
+>[!Note] **Structural vs Semantic Stability**
+>Platform primitives express structural invariants: how data flows, how time windows are evaluated, how conditions are processed. These mechanisms remain stable across domains.
+>Domain applications, however, contain semantic invariants. An energy billing rule may be stable within the energy domain. A compliance report may follow a fixed structure within its context. 
+>
+>But those semantics are not cross-domain primitives. They are stable within a domain, not across domains.
+>
+>Confusing these two forms of stability is what leads platforms to absorb responsibilities they cannot generalize without distortion.
+>
+>Domain-specific behavior then builds on top of these primitives. It composes them. It configures them. It extends them when necessary. But it does not rewrite their structural contracts.
+
+When primitives are stable, domain logic remains external. When primitives are allowed to absorb semantics, the platform begins to deform under the weight of specialization.
+
+Generalization, then, is not about making every layer flexible. It is about deciding which capabilities deserve to become primitives, and protecting them from semantic drift.
+
+## Misplaced variability in the implementation
+
+To ground better the concept, let's work through an example.
+
+Assume a platform that ingests time-series events and supports dashboards, alerts, and reports. It is meant to work across domains: energy, water, environmental sensing.
+
+Certain mechanisms are structural.
+
+A time window is always a time window.  
+An aggregation is always a reduction over a set of events.  
+An alert is always a condition evaluated over a window.
+
+Those can be expressed as primitives:
+
+```python
+class TimeWindow:
+    def __init__(self, start: datetime, end: datetime):
+        self.start = start
+        self.end = end
+
+def aggregate(events: list[Event], window: TimeWindow, metric: str) -> float:
+    filtered = [
+        e for e in events
+        if window.start <= e.timestamp <= window.end
+    ]
+    return sum(getattr(e, metric) for e in filtered)
+
+```
+
+This primitive encodes a contract:
+
+- It knows how to filter by time.    
+- It knows how to reduce a metric.    
+- It does not know why the aggregation is needed.
+
+Now consider domain-specific logic layered on top.
+
+```python
+def energy_bill(events: list[Event], rate_per_kwh: float) -> float:
+    window = TimeWindow(month_start(), month_end())
+    total_kwh = aggregate(events, window, metric="kwh")
+    return total_kwh * rate_per_kwh
+```
+
+```python
+def water_bill(events: list[Event], rate_per_m3: float) -> float:
+    window = TimeWindow(month_start(), month_end())
+    total_m3 = aggregate(events, window, metric="cubic_meters")
+    return total_m3 * rate_per_m3
+```
+
+The primitive remains stable.  
+Domain behavior composes on top.
+
+Now consider what happens when variability is misplaced.
+
+Instead of keeping billing semantics outside, the platform begins to “*help*.”
+
+```python
+def aggregate(events, window, metric, domain=None, billing_rules=None):
+    filtered = [
+        e for e in events
+        if window.start <= e.timestamp <= window.end
+    ]
+
+    total = sum(getattr(e, metric) for e in filtered)
+
+    if domain == "energy":
+        if billing_rules.get("tiered"):
+            total = apply_energy_tiers(total, billing_rules)
+
+    elif domain == "water":
+        if billing_rules.get("minimum_charge"):
+            total = max(total, billing_rules["minimum_charge"])
+
+    elif domain == "gas":
+        # more special handling
+        ...
+
+    return total
+```
+
+The aggregation primitive now:
+
+- Knows about domains.
+- Knows about billing policies.
+- Contains branching logic unrelated to its structural responsibility.
+- Evolves every time a new domain is introduced.
+
+This is where complexity begins to diffuse.
+
+The primitive is no longer a structural contract.  
+It has become a policy container.
+
+Every new use case requires modifying the supposedly “general” layer. The result is a platform that is flexible in theory but brittle in practice. Changes meant for one domain risk affecting others. Testing surface area grows. Debugging scope widens.
+
+The difference between the two approaches is not syntactic. It is architectural.
+
+In the first case, variability is localized.  
+In the second, variability is systemic.
+
+And once variability becomes systemic, generalization stops being an asset and starts becoming a liability.
+
+## Is generalization possible?
+
+Generalization in systems is not only possible, it is often desirable. Reusable platforms, shared infrastructure, and common abstractions are what allow systems to scale beyond their initial scope.
+
+The problem is not whether a system can be generalized.  
+The problem is whether it can be generalized without eroding its structural integrity.
+
+When generalization is applied deliberately, variability is confined behind explicit contracts. Primitives remain stable. Semantics remain external. Domain-specific behavior composes with the platform rather than reshaping it.
+
+When generalization is applied indiscriminately, variability seeps into layers that were meant to remain structural. Mechanisms absorb policies. Core abstractions accumulate special cases. The platform begins to contort around edge conditions it was never meant to encode.
+
+The difference is subtle at first. Both approaches appear flexible. Both support multiple use cases. Both can claim configurability.
+
+The divergence appears under growth.
+
+In one case, adding a new domain means composing existing primitives in a new way.  
+In the other, adding a new domain means modifying the platform itself.
+
+That distinction is the real boundary between a reusable system and an increasingly fragile one.
+
+Generalization is not about making everything configurable.  
+It is about deciding which capabilities deserve to be foundational, and which behaviors must remain domain-specific.
+
+It is about protecting structural invariants from semantic drift.
+
+And ultimately, it is about recognizing that reuse is not achieved by absorbing variation everywhere, but by localizing it precisely where it belongs.
