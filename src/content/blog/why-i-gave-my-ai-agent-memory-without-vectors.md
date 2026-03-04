@@ -345,4 +345,4 @@ It is a system that protects the model's attention.
 
 And in long-running agents, protecting attention is what keeps them useful.
 
-The system is open-source and built on stdlib Python with zero required dependencies: [context-engine](https://github.com/Jobenas/context-engine).
+The system is open-source and built on stdlib Python with zero required dependencies: <a href="https://github.com/Jobenas/context-engine" target="_blank" rel="noopener noreferrer">context-engine</a>.
