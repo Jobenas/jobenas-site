@@ -3,7 +3,14 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Jorge Benavides Aspiazu. All rights reserved.
+	<div class="business-info">
+		<strong>Jorge Benavides Aspiazu</strong>
+		<span>jobenas — IoT & Connected Systems Consulting</span>
+		<span>Lima, Peru &middot; me@jobenas.com</span>
+	</div>
+	<div class="copyright">
+		&copy; {today.getFullYear()} Jorge Benavides Aspiazu. All rights reserved.
+	</div>
 	<!-- <div class="social-links">
 		<a href="https://m.webtoo.ls/@astro" target="_blank">
 			<span class="sr-only">Follow Astro on Mastodon</span>
@@ -41,10 +48,24 @@ const today = new Date();
 </footer>
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
+		padding: 2em 1em 4em 1em;
 		background: linear-gradient(var(--gray-gradient)) no-repeat;
 		color: rgb(var(--gray));
 		text-align: center;
+	}
+	.business-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25em;
+		margin-bottom: 1.5em;
+		font-size: 0.9em;
+	}
+	.business-info strong {
+		color: rgb(var(--gray-dark));
+		font-size: 1.05em;
+	}
+	.copyright {
+		font-size: 0.85em;
 	}
 	.social-links {
 		display: flex;
