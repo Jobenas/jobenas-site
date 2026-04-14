@@ -8,6 +8,17 @@ const today = new Date();
 		<span>jobenas — IoT & Connected Systems Consulting</span>
 		<span>Lima, Peru &middot; me@jobenas.com</span>
 	</div>
+	<div class="newsletter-footer">
+		<form
+			action="https://buttondown.com/api/emails/embed-subscribe/jobenas"
+			method="post"
+			target="popupwindow"
+			class="embeddable-buttondown-form"
+		>
+			<input type="email" name="email" placeholder="your@email.com" required />
+			<input type="submit" value="Subscribe" />
+		</form>
+	</div>
 	<div class="copyright">
 		&copy; {today.getFullYear()} Jorge Benavides Aspiazu. All rights reserved.
 	</div>
@@ -63,6 +74,34 @@ const today = new Date();
 	.business-info strong {
 		color: rgb(var(--gray-dark));
 		font-size: 1.05em;
+	}
+	.newsletter-footer {
+		margin-bottom: 1.25em;
+	}
+	.newsletter-footer form {
+		display: flex;
+		justify-content: center;
+		gap: 0.5em;
+	}
+	.newsletter-footer input[type="email"] {
+		padding: 0.4em 0.75em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		font-size: 0.85em;
+		width: 200px;
+	}
+	.newsletter-footer input[type="submit"] {
+		padding: 0.4em 1em;
+		background: var(--accent);
+		color: white;
+		border: none;
+		border-radius: 6px;
+		font-weight: 700;
+		cursor: pointer;
+		font-size: 0.85em;
+	}
+	.newsletter-footer input[type="submit"]:hover {
+		background: var(--accent-dark);
 	}
 	.copyright {
 		font-size: 0.85em;

@@ -1,5 +1,6 @@
 ---
 title: "Memory Is Not Retrieval: Designing Long-Running AI Agents"
+subtitle: "Building AI agent memory that protects attention instead of maximizing recall"
 description: "Long-lived AI agents degrade not from missing context, but from uncontrolled accumulation. This is how I built a memory and compression system that protects attention instead of maximizing retrieval."
 pubDate: 2026-03-04
 heroImage: "../../assets/context-engine-memory.png"

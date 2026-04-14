@@ -1,5 +1,6 @@
 ---
 title: "When networks don’t own device state"
+subtitle: "Building control planes for IoT networks that track device lifecycle"
 description: "Why control planes at the network level are not a design decision but a critical component."
 pubDate: 2026-01-09
 heroImage: "../../assets/IoT chaos and control contrast.png"

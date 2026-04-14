@@ -1,0 +1,188 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Services — Jorge Benavides Aspiazu"
+			description="IoT architecture reviews, embedded firmware development, production debugging, and system integration. Based in Lima, Peru."
+		/>
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
+			h1 {
+				margin-bottom: 0.5em;
+			}
+			.intro {
+				margin-bottom: 2.5em;
+				font-size: 1.05em;
+				line-height: 1.7;
+			}
+			.service {
+				margin-bottom: 2.5em;
+			}
+			.service h3 {
+				margin-bottom: 0.25em;
+				font-size: 1.3em;
+			}
+			.service .scope {
+				color: rgb(var(--gray));
+				font-size: 0.9em;
+				margin-bottom: 0.5em;
+			}
+			.portfolio {
+				margin-top: 3em;
+				padding-top: 2em;
+				border-top: 1px solid rgb(var(--gray-light));
+			}
+			.portfolio h2 {
+				font-size: 1.6em;
+				margin-bottom: 1em;
+			}
+			.portfolio-item {
+				margin-bottom: 1.5em;
+			}
+			.portfolio-item strong {
+				display: block;
+				margin-bottom: 0.25em;
+			}
+			.cta {
+				margin-top: 3em;
+				padding: 2em;
+				background: rgba(var(--gray-light), 50%);
+				border-radius: 12px;
+				text-align: center;
+			}
+			.cta h2 {
+				font-size: 1.5em;
+				margin-bottom: 0.5em;
+			}
+			.cta a {
+				display: inline-block;
+				margin-top: 1em;
+				padding: 0.75em 2em;
+				background: var(--accent);
+				color: white;
+				text-decoration: none;
+				border-radius: 8px;
+				font-weight: 700;
+				font-size: 1.05em;
+			}
+			.cta a:hover {
+				background: var(--accent-dark);
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Services</h1>
+
+			<div class="intro">
+				<p>
+					I work with teams on existing IoT and connected systems — the kind where
+					devices are already deployed, data is already flowing, and the problems are
+					specific to your architecture.
+				</p>
+				<p>
+					Most engagements start as focused technical work and expand as complexity
+					surfaces. I operate across the full stack: PCB-level constraints through
+					cloud infrastructure.
+				</p>
+			</div>
+
+			<div class="service">
+				<h3>Architecture Review</h3>
+				<p class="scope">Project-based</p>
+				<p>
+					Deep review of your IoT or embedded system architecture. I look at device
+					firmware structure, network topology, data ingestion pipelines, and the
+					boundaries where components interact. You get a written report with
+					specific recommendations — not a deck of generalities.
+				</p>
+			</div>
+
+			<div class="service">
+				<h3>IoT System Integration</h3>
+				<p class="scope">Project-based</p>
+				<p>
+					Multi-network device deployments, protocol bridging (MQTT, CoAP, LoRaWAN,
+					LTE-M), cloud ingestion pipelines, and device lifecycle management.
+					Particularly experienced with heterogeneous fleets where no two device
+					types behave the same.
+				</p>
+			</div>
+
+			<div class="service">
+				<h3>Production Debugging & Optimization</h3>
+				<p class="scope">Retainer or project-based</p>
+				<p>
+					When something is broken in production and nobody can figure out why.
+					Field-deployed devices dropping data, ingestion pipelines silently losing
+					events, firmware crashes that only happen under load. I find the root cause
+					and fix it.
+				</p>
+			</div>
+
+			<div class="service">
+				<h3>Embedded Firmware Development</h3>
+				<p class="scope">Project-based</p>
+				<p>
+					Custom firmware for STM32, ESP32, and similar MCUs. Sensor integration,
+					communication stacks, power management, OTA update systems. I write
+					firmware that survives deployment — not just firmware that compiles.
+				</p>
+			</div>
+
+			<div class="portfolio">
+				<h2>Selected Work</h2>
+
+				<div class="portfolio-item">
+					<strong>0G Peru — IoT Network Operator</strong>
+					<p>
+						Turnkey IoT connectivity for industrial and utility clients in Peru.
+						Full vertical: device provisioning, multi-network management (LoRaWAN,
+						LTE-M, satellite), cloud data platform, and customer dashboards.
+					</p>
+				</div>
+
+				<div class="portfolio-item">
+					<strong>DataFlowLabs — Hardware + Cloud Platform</strong>
+					<p>
+						Hardware product line (DataEdge) and cloud platform (DataOS) for
+						industrial monitoring. PCB design through Kubernetes deployment.
+						Real-time data ingestion from heterogeneous sensor fleets.
+					</p>
+				</div>
+
+				<div class="portfolio-item">
+					<strong>Medical Billing System</strong>
+					<p>
+						Compliance-grade appointment and billing platform with full audit
+						trails. Multi-tenant architecture handling sensitive patient data
+						under strict regulatory requirements.
+					</p>
+				</div>
+			</div>
+
+			<div class="cta">
+				<h2>Let's talk about your system</h2>
+				<p>
+					Describe the problem you're facing. I'll tell you if I can help and
+					how I'd approach it.
+				</p>
+				<a href="mailto:me@jobenas.com">me@jobenas.com</a>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

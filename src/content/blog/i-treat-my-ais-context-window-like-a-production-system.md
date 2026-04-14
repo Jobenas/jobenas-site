@@ -1,5 +1,6 @@
 ---
 title: "I Treat My AI's Context Window Like a Production System"
+subtitle: "Applying log rotation and cache eviction patterns to AI agent memory"
 description: "Long-running systems need maintenance loops. Logs rotate, caches expire, databases compact. Your AI agent's context window is no different, but almost nobody treats it that way."
 pubDate: 2026-03-25
 heroImage: "../../assets/context-window-production.png"

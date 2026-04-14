@@ -8,7 +8,7 @@ const email = "me@jobenas.com";
 
   <p>
     I write about engineering problems that only show up once systems grow:
-    decaying toolchains, brittle boundaries, and the hidden cost of “just one more workaround.”
+    decaying toolchains, brittle boundaries, and the hidden cost of "just one more workaround."
   </p>
 
   <p>
@@ -16,6 +16,20 @@ const email = "me@jobenas.com";
     feel free to reach out at <a href={`mailto:${email}`}>{email}</a>. I’m more interested in
     discussing real systems than debating abstractions.
   </p>
+
+  <div class="newsletter-signup">
+    <h3>Want more?</h3>
+    <p>Subscribe for new posts on IoT production problems, embedded systems, and infrastructure that actually works.</p>
+    <form
+      action="https://buttondown.com/api/emails/embed-subscribe/jobenas"
+      method="post"
+      target="popupwindow"
+      class="embeddable-buttondown-form"
+    >
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <input type="submit" value="Subscribe" />
+    </form>
+  </div>
 </section>
 
 <style>
@@ -32,5 +46,47 @@ const email = "me@jobenas.com";
   .post-footer h3 {
     margin: 0 0 0.75rem 0;
     font-size: 1.05rem;
+  }
+  .newsletter-signup {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(var(--gray-light), 40%);
+    border-radius: 8px;
+  }
+  .newsletter-signup h3 {
+    margin-bottom: 0.5rem;
+  }
+  .newsletter-signup p {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+  }
+  .newsletter-signup form {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .newsletter-signup input[type="email"] {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  .newsletter-signup input[type="submit"] {
+    padding: 0.5rem 1.25rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .newsletter-signup input[type="submit"]:hover {
+    background: var(--accent-dark);
+  }
+  @media (max-width: 720px) {
+    .newsletter-signup form {
+      flex-direction: column;
+    }
   }
 </style>

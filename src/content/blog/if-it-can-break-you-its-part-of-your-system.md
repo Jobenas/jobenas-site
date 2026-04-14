@@ -1,5 +1,6 @@
 ---
 title: "If it can break you, it's part of your system"
+subtitle: "Why IoT system boundaries need explicit ownership, not implicit trust"
 description: "IoT systems break at the boundary between components, and why indirect responsibility is critical"
 pubDate: 2025-12-26
 heroImage: "../../assets/broken-iot-system.png"

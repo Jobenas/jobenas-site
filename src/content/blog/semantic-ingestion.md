@@ -1,5 +1,6 @@
 ---
 title: "Why Schema Flexibility in IoT Fails Without Explicit Metadata"
+subtitle: "Designing IoT data ingestion that survives heterogeneous device fleets"
 description: "Generic platforms break when meaning is inferred from structure. Here’s what survives growth."
 pubDate: 2025-12-19
 heroImage: "../../assets/why-schema-flexibility-in-iot-fails.png"
