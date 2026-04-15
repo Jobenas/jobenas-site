@@ -3,7 +3,7 @@ title: "I Built a Voice Assistant That Answers My Phone — The $0 Stack"
 subtitle: "SIP, RTP, and the telephony debugging that AI tutorials skip"
 description: "How I built a personal voice assistant that registers as a SIP extension on my PBX, handles phone calls with speech recognition and natural TTS, and costs nothing to run."
 pubDate: 2026-04-15
-heroImage: "../../assets/blog-placeholder-3.jpg"
+heroImage: "../../assets/blog-voice-assistant-hero.png"
 ---
 
 Every existing voice assistant option assumes you either want a toy or an enterprise contract. Google Home answers trivia. Alexa controls lights. Twilio's voice API starts at fractions of a cent per minute, which compounds fast when you're running a persistent assistant that handles calls throughout the day.
