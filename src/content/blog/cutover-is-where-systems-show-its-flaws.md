@@ -1,5 +1,6 @@
 ---
 title: "Cutover Is Where Systems Stop Optimizing for You"
+subtitle: "Why migrations and transient states expose hidden assumptions in system design"
 description: "Why system optimization works for the steady state but not for transient states."
 pubDate: 2025-12-23
 heroImage: "../../assets/migration.png"

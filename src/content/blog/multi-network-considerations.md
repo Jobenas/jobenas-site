@@ -1,5 +1,6 @@
 ---
 title: "Multi network considerations for scaling IoT applications"
+subtitle: "LoRaWAN, LTE-M, and satellite — managing multi-network IoT deployments"
 description: "When multiple networks are required by an IoT solution explicit contracts are required"
 pubDate: 2026-01-02
 heroImage: "../../assets/multi-networks.png"
