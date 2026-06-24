@@ -1,0 +1,76 @@
+---
+title: "Does AI fit into the IoT stack?"
+description: "LLMs and IoT are not incompatible — but placement determines whether the combination works or breaks the pipeline"
+pubDate: 2026-06-23
+heroImage: "../../assets/ai-iot-stack.png"
+---
+
+The promise of IoT has always been to derive valuable insights from data collected from variables in the environment. With enough data collection, automation, and the proper rules, valuable information can be derived. This happens in a lot of places properly, but there's significant domain expertise and trial and error involved in getting there.
+
+Machine Learning models have been part of this picture for at least a decade. Linear regression, LSTMs, and similar approaches can find patterns that fixed threshold rules miss. The limitation isn't the models themselves. Each one is trained to answer a specific question under a specific set of conditions. The question has to be known in advance. If the pattern you care about wasn't anticipated when the model was designed, it won't surface.
+
+Large Language Models change that constraint. Their capacity for open-ended reasoning means they don't need a pre-specified question. They can be given context and asked to find what's worth noticing. That's a fundamentally different posture toward data.
+
+Most LLM usage in the IoT space ignores this. The dominant pattern is using LLMs to automate software development: firmware generation, cloud application scaffolding, documentation. Valuable, but it leaves untouched the more interesting problem. Putting an LLM above the application layer, as an intelligence layer that reads what the application produces, is a different use case entirely, and one worth examining.
+
+## The IoT structure
+
+Although IoT solutions are heterogeneous by nature, they share a general shape. The structure most IoT solutions follow is a layered organization:
+
+- Sensing Layer
+- Communications Layer
+- Data Ingestion Layer
+- Data Storage Layer
+- Application Layer
+
+Some definitions include a data analysis layer that sits below the application, but for purposes of this discussion the five-layer structure is sufficient.
+
+What this means in practice is that each component is effectively siloed in a way that makes understanding the system clear. Data flows cleanly between layers through shared, previously understood interfaces. A sensor reading in the sensing layer knows how to communicate, and the data ingestion layer knows how to receive it, through a shared contract that runs through the communications layer. The same applies all the way up to storage.
+
+Sitting at the top, the application layer is what brings meaning to all this structure. This is where measurements are organized, presented, and turned into answers that provide real value. Usually this takes the form of dashboards and alerting, allowing stakeholders to understand what's going on, take action, and optimize on outcomes.
+
+The problem is that this requires not just domain expertise, but foreknowledge of which questions need answering. The most interesting insights might come from questions that weren't known to begin with. Patterns that aren't clear from the start, and that wouldn't be visible from a single variable seen in isolation.
+
+The value of the traditional application layer is not negligible, but it's fixed. It requires knowing what to look for. Some questions can be answered here. Some can't. That should be treated as a fact of life.
+
+## The reasoning layer
+
+The key property of an LLM that's relevant here is that its reasoning is not deterministic. It doesn't apply a fixed rule to produce a result. It can surface patterns and observations without a pre-specified business rule to check against.
+
+That property creates two incompatibilities with the layers below it.
+
+The first is reproducibility. The core goal of any IoT implementation is verifiable, reproducible, precise results. The entire system reads hard sensor data and transmits it over a network for storage and analysis. A component that produces different outputs from identical inputs is problematic at best and dangerous at worst when embedded in that pipeline.
+
+The second is the interface. LLMs are fundamentally text-input systems. Multimodal implementations that accept audio or images convert them to an intermediate representation before processing. IoT analysis depends on hard numbers in sequence, typically time-series data. That structure is not what an LLM naturally consumes.
+
+These two properties don't make the reasoning layer incompatible with the IoT stack. They define the constraints it has to operate within.
+
+## The translation layer
+
+Both incompatibilities point to the same solution: the reasoning layer can't sit inside the deterministic pipeline. It has to sit above it, with a well-defined interface controlling what it sees and what it can do.
+
+Model Context Protocol (MCP), introduced in late 2024, provides that interface. It defines how tools and data sources can be exposed to an AI model with explicit input contracts that constrain what the model can query or execute.
+
+In this context, that means exposing IoT data through MCP tools rather than giving the model direct access to the database. A tool that extracts time-series values with defined parameters has two important properties. First, it guarantees the model gets real, validated data. Second, it removes the surface area for the model to generate incorrect queries or execute unintended operations.
+
+This is more than a thin wrapper on a database query. It's a flattening of the data into a form the model can reason about cleanly.
+
+Where this becomes genuinely powerful is when the translation layer crosses data sources. Agricultural sensors for soil humidity, wind speed, and rain gauges describe the immediate state of the place they're measuring. Combined with weather forecasts or data from distant stations, they can yield patterns that suggest better actions. Neither source alone contains the answer. The connection between them can't be codified into a deterministic rule because the question isn't precise enough to reduce that way. "How can I increase my yield?" doesn't live in a single source. The answer is in the pattern across several of them. That's where a flexible reasoning component earns its place.
+
+## The system put together
+
+The final architecture separates responsibilities clearly.
+
+The lower layers, from sensing through storage, remain fully deterministic. They do what they've always done: collect, transmit, ingest, and store hard data. The application layer produces the queryable surface, normalized measurements, alerts, and status information. The translation layer, implemented as MCP tools, exposes that surface to the reasoning layer with controlled inputs that prevent hallucination on data values.
+
+The reasoning layer sits above all of this. Its job is not to replace the application layer but to read what it produces. It queries through the translation layer, looks for patterns across sources, and surfaces insights the deterministic layers couldn't produce on their own. Non-determinism is not a problem at this level because the deterministic parts have already been handled below it.
+
+The agricultural example holds here. The sensors and the application layer produce accurate readings. The reasoning layer combines those readings with external data and asks a question the application layer can't answer by design. Both layers do their jobs. Neither is doing the other's.
+
+## What this means going forward
+
+The incompatibility between AI and IoT is real, but it's a placement problem, not a fundamental one. Put an LLM inside the deterministic pipeline and you break the pipeline. Put it above the pipeline with a proper interface and you get capabilities the pipeline couldn't provide.
+
+MCP provides that interface. The translation layer controls what the model sees and how it queries. The lower layers stay deterministic. The reasoning layer stays flexible.
+
+The result is a stack with a clean boundary: everything below the translation layer is reproducible and precise, everything above it is capable of open-ended reasoning. Each layer does what it's actually good at. That's not a compromise. That's the design.
