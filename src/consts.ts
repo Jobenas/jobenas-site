@@ -2,4 +2,4 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = "Jorge";
-export const SITE_DESCRIPTION = "This site is a notebook of engineering problems that only show up once systems grow. It spans embedded firmware and hardware constraints, data ingestion, cloud backends, and the trade-offs that survive real production use.";
+export const SITE_DESCRIPTION = "A notebook of engineering problems that only show up once systems grow — spanning embedded firmware, LPWAN networks, data ingestion pipelines, and the intelligence layer that reads what those systems produce.";
