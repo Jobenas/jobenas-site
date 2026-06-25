@@ -1,31 +1,64 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 ---
 
-<Layout
-	title="About Me"
-	description="Here's a little bit about me."
-	pubDate={new Date('December 19 2025')}
->
-	<p>
-		I’m Jorge Benavides Aspiazu (jobenas), an electrical engineer focused on end-to-end IoT and connected systems.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="About — Jorge Benavides Aspiazu"
+			description="Electrical engineer working across IoT, embedded systems, and AI agent infrastructure."
+		/>
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>About</h1>
 
-	<p>
-		Most of my work sits at the boundary between constrained devices and production software: firmware architecture, ingestion pipelines, data modeling, and the operational trade-offs that show up after deployment.
-	</p>
+			<p>
+				I'm Jorge Benavides Aspiazu (jobenas), an electrical engineer focused on
+				IoT, connected systems, and the intelligence layer above them.
+			</p>
 
-	<p>
-		This site is where I write down patterns that hold up in real systems—especially when requirements evolve and the device mix becomes heterogeneous.
-	</p>
+			<p>
+				My work spans the full stack: embedded firmware for constrained hardware,
+				multi-network deployments across LoRaWAN, LTE-M, and satellite, data
+				ingestion pipelines, cloud backends, and AI agent infrastructure that reads
+				and reasons across what those pipelines produce.
+			</p>
 
-	<p>
-		I also work with teams facing production issues at the boundary between devices, networks, and cloud systems.
-	</p>
+			<p>
+				The interesting problems sit at boundaries — between devices and networks,
+				between networks and cloud systems, between structured sensor data and
+				questions that data can't directly answer. That last boundary is where I've
+				been spending more time.
+			</p>
 
-	<p>
-		Contact: me@jobenas.com.
-	</p>
-</Layout>
+			<p>
+				I also ship tools. <a href="https://pypi.org/project/phantom-browse/" target="_blank">phantom-browse</a>
+				is a stealth browser automation library I published on PyPI — built for
+				human-like interaction patterns and session reuse across extended runs.
+			</p>
 
+			<p>
+				This site is where I write about patterns that hold up in production,
+				particularly the ones that only surface once systems grow.
+			</p>
+
+			<p>
+				Contact: <a href="mailto:me@jobenas.com">me@jobenas.com</a>
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
